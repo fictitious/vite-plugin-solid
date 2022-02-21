@@ -261,6 +261,9 @@ export default function solidPlugin(options: Partial<Options> = {}): Plugin {
       replaceDev = options.dev === true || (options.dev !== false && command === 'serve');
       projectRoot = userConfig.root;
 
+      // Does the user want unoptimized solid sources ?
+      const solidSourcesCondition = userConfig?.resolve?.conditions?.includes('solid-sources');
+
       // TODO: remove when fully removed from vite
       const legacyAlias = normalizeAliases(userConfig.alias);
 
@@ -284,7 +287,7 @@ export default function solidPlugin(options: Partial<Options> = {}): Plugin {
           alias: [{ find: /^solid-refresh$/, replacement: runtimePublicPath }],
         },
         optimizeDeps: {
-          include: nestedDeps,
+          include: solidSourcesCondition ? [] : nestedDeps,
         },
       } as UserConfig;
     },
